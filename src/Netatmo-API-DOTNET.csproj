@@ -38,17 +38,25 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\MeasurementTypeExtensions.cs" />
     <Compile Include="Extensions\NetatmoScopeExtensions.cs" />
+    <Compile Include="Extensions\ScaleExtensions.cs" />
     <Compile Include="Model\Administrative.cs" />
     <Compile Include="Model\AlarmConfig.cs" />
     <Compile Include="Model\DashboardData.cs" />
     <Compile Include="Model\DefaultAlarm.cs" />
     <Compile Include="Model\Device.cs" />
+    <Compile Include="Model\Measurement.cs" />
+    <Compile Include="Model\MeasurementData.cs" />
+    <Compile Include="Model\MeasurementType.cs" />
+    <Compile Include="Model\MeasurementValue.cs" />
     <Compile Include="Model\MeteoAlarm.cs" />
     <Compile Include="Model\OAuthAccessToken.cs" />
     <Compile Include="Model\PersonalizedAlarm.cs" />
     <Compile Include="Model\Place.cs" />
     <Compile Include="Model\Response.cs" />
+    <Compile Include="Model\Scale.cs" />
     <Compile Include="Model\StationsBody.cs" />
     <Compile Include="Model\StationsData.cs" />
     <Compile Include="Model\User.cs" />

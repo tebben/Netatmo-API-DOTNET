@@ -1,0 +1,35 @@
+﻿namespace Netatmo.Net.Model
+{
+    public enum MeasurementType
+    {
+        Temperature,
+        Co2,
+        Humidity,
+        Pressure,
+        Noise,
+        min_temp,
+        date_min_temp,
+        max_temp,
+        date_max_temp,
+        min_hum,
+        date_min_hum,
+        max_hum,
+        date_max_hum,
+        min_pressure,
+        date_min_pressure,
+        max_pressure,
+        date_max_pressure,
+        min_noise,
+        date_min_noise,
+        max_noise,
+        date_max_noise,
+        date_min_co2,
+        date_max_co2,
+        sum_rain,
+        WindStrength,
+        WindAngle,
+        GustStrength,
+        GustAngle,
+        date_max_gust
+    }
+}
