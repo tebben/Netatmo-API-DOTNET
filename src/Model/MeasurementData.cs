@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -29,6 +30,9 @@ namespace Netatmo.Net.Model
             if (optimized)
             {
                 var array = Data as JArray;
+                if (array == null)
+                    throw new Exception("Unexpected JSON format");
+
                 foreach (var a in array)
                 {
                     var begintime = (long)JsonConvert.DeserializeObject(a["beg_time"].ToString(), typeof(long));

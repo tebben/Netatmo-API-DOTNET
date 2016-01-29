@@ -109,17 +109,17 @@ namespace Netatmo.Net
         /// <summary>
         /// Retrieve measurements
         /// </summary>
-        /// <param name="deviceId">leave null or empty to get all devices, specify to get target device</param>        
-        /// <param name="scale"></param>
-        /// <param name="measurementTypes"></param>
-        /// <param name="onlyLastMeasurement"></param>
-        /// <param name="moduleId"></param>
-        /// <param name="optimize"></param>
-        /// <param name="begin"></param>
-        /// <param name="end"></param>
-        /// <param name="limit"></param>
-        /// <param name="realtime"></param>
-        public async Task<Response<MeasurementData>> GetMeasure(string deviceId, Scale scale, MeasurementType[] measurementTypes, bool onlyLastMeasurement = false, string moduleId = null, bool optimize = true, DateTime? begin = null, DateTime? end = null, int limit = 1024, bool realtime = false)
+        /// <param name="deviceId">device id to retrieve measurements for</param>        
+        /// <param name="scale">Scale for the measurements, not all Measurement Types support all scales for more info see "https://dev.netatmo.com/doc/methods/getmeasure"</param>
+        /// <param name="measurementTypes">Measurement types to retrieve</param>
+        /// <param name="onlyLastMeasurement">Retrieve only the last measurement</param>
+        /// <param name="moduleId">id of the module to retirve if not supplied the measurements from the device will be fetched</param>
+        /// <param name="optimize">optimize response data</param>
+        /// <param name="begin">begin date of measurements to retrieve</param>
+        /// <param name="end">end date of measurements to retrieve</param>
+        /// <param name="limit">limit the measurements by a given amount, max = 1024</param>
+        /// <param name="realtime">In scales higher than max, since the data is aggregated, the timestamps returned are by default offset by +(scale/2). </param>
+        public async Task<Response<MeasurementData>> GetMeasure(string deviceId, Scale scale, MeasurementType[] measurementTypes, string moduleId = null, bool onlyLastMeasurement = false, DateTime? begin = null, DateTime? end = null, bool optimize = true, int limit = 1024, bool realtime = false)
         {
             var canRequest = await CanRequestNetatmo();
             if (!canRequest.IsSuccessStatusCode)
