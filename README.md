@@ -1,4 +1,6 @@
 # Netatmo-API-DOTNET
 Netatmo API for .Net (PCL)
 
-Netatmo Weather Station API client implementation - .NET SDK
+Start of a Netatmo Weather Station API client implementation for .NET, currently supporting:
+- Login
+- GetStationsData
