@@ -12,7 +12,7 @@ namespace Netatmo.Net.Extensions
 
         public static DateTime ToDateTime(this long timestamp)
         {            
-            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(timestamp).ToLocalTime();
             return dtDateTime;
         }

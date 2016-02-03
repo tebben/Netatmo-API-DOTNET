@@ -1,4 +1,4 @@
-﻿namespace Netatmo.Net
+﻿namespace Netatmo.Net.Model
 {
     public enum NetatmoScope
     {

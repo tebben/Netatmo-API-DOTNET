@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Netatmo.Net.Model;
 
 namespace Netatmo.Net.Extensions
 {
@@ -6,8 +7,7 @@ namespace Netatmo.Net.Extensions
     {
         public static string ToScopeString(this NetatmoScope[] scopes)
         {
-            var scopeString = scopes.Aggregate("", (current, netatmoScope) => current + $"{netatmoScope} ");
-            scopeString = scopeString.TrimEnd();
+            var scopeString = scopes.Aggregate("", (current, netatmoScope) => string.IsNullOrEmpty(current) ? current +  $"{netatmoScope}" : current + $" {netatmoScope}");
             return scopeString;
         }
     }

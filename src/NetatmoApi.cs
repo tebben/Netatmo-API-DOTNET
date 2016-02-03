@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Netatmo.Net.Extensions;
 using Netatmo.Net.Model;
+using Netatmo.Net.Utils;
 using Newtonsoft.Json;
 
 namespace Netatmo.Net
@@ -14,19 +16,10 @@ namespace Netatmo.Net
     public class NetatmoApi
     {
         private readonly HttpClient _httpClient;
-        private string RequestTokenUrl => $"{UrlBase}{UrlRequestTokenPath}";
-        private string GetStationsDataUrl => $"{UrlBase}{UrlGetStationsData}";
-        private string GetMeasureUrl => $"{UrlBase}{UrlGetMeasuree}";
-
-        public string UrlBase = "https://api.netatmo.com";
-        public string UrlRequestTokenPath = "/oauth2/token";
-        public string UrlGetStationsData = "/api/getstationsdata";
-        public string UrlGetMeasuree = "/api/getmeasure";
-
-        public OAuthAccessToken OAuthAccessToken { get; private set; }
 
         public string ClientId { get; }
         public string ClientSecret { get; }
+        public OAuthAccessToken OAuthAccessToken { get; private set; }
 
         public event LoginSuccessfulHandler LoginSuccessful;
         public event LoginFailedlHandler LoginFailed;
@@ -51,22 +44,12 @@ namespace Netatmo.Net
         /// <param name="scopes"></param>
         public async void Login(string email, string password, NetatmoScope[] scopes)
         {
-            var content = new MultipartFormDataContent
-            {
-                {new StringContent("password"), "grant_type"},
-                {new StringContent(ClientId), "client_id"},
-                {new StringContent(ClientSecret), "client_secret"},
-                {new StringContent(email), "username"},
-                {new StringContent(password), "password"},
-                {new StringContent(scopes.ToScopeString()), "scope"}
-            };
+            var content = HttpContentCreator.CreateLoginHttpContent(ClientId, ClientSecret, email, password, scopes);
+            var response = await Request<OAuthAccessToken>(Urls.RequestTokenUrl, content, true);
 
-            var response = await _httpClient.PostAsync(RequestTokenUrl, content);
-            
-            if (response.IsSuccessStatusCode)
+            if (response.Success)
             {
-                var responseString = await response.Content.ReadAsStringAsync();
-                OAuthAccessToken = JsonConvert.DeserializeObject<OAuthAccessToken>(responseString);
+                OAuthAccessToken = response.Result;
                 OnLoginSuccessful();
             }
             else
@@ -76,34 +59,15 @@ namespace Netatmo.Net
         }
 
         /// <summary>
-        /// Retrieve stations data
+        /// Retrieve private or partner weather station data
         /// </summary>
         /// <param name="deviceId">leave null or empty to get all devices, specify to get target device</param>
         /// <param name="getfavorites">set to true to get favorited devices</param>
         public async Task<Response<StationsData>> GetStationsData(string deviceId = null, bool getfavorites = false)
         {
-            var canRequest = await CanRequestNetatmo();
-            if(!canRequest.IsSuccessStatusCode)
-                return Response<StationsData>.CreateUnsuccessful("Unable to request Netatmo", canRequest.StatusCode);
-
-            var content = new MultipartFormDataContent
-            {
-                {new StringContent(OAuthAccessToken.AccessToken), "access_token"},
-            };
-
-            if(!string.IsNullOrEmpty(deviceId))
-                content.Add(new StringContent(deviceId), "device_id");
-            if (getfavorites)
-                content.Add(new StringContent("true"), "get_favorites");
-
-            var response = await _httpClient.PostAsync(GetStationsDataUrl, content);
-            var responseString = await response.Content.ReadAsStringAsync();
-
-            var sdResponse = response.IsSuccessStatusCode ? 
-                Response<StationsData>.CreateSuccessful(JsonConvert.DeserializeObject<StationsData>(responseString), response.StatusCode) : 
-                Response<StationsData>.CreateUnsuccessful(responseString, response.StatusCode);
-
-            return sdResponse;
+            var content = HttpContentCreator.CreateGetStationsDataHttpContent(deviceId, getfavorites);
+            var response = await Request<StationsData>(Urls.GetStationsDataUrl, content);
+            return response;
         }
 
         /// <summary>
@@ -121,82 +85,57 @@ namespace Netatmo.Net
         /// <param name="realtime">In scales higher than max, since the data is aggregated, the timestamps returned are by default offset by +(scale/2). </param>
         public async Task<Response<MeasurementData>> GetMeasure(string deviceId, Scale scale, MeasurementType[] measurementTypes, string moduleId = null, bool onlyLastMeasurement = false, DateTime? begin = null, DateTime? end = null, bool optimize = true, int limit = 1024, bool realtime = false)
         {
-            var canRequest = await CanRequestNetatmo();
-            if (!canRequest.IsSuccessStatusCode)
-                return Response<MeasurementData>.CreateUnsuccessful("Unable to request Netatmo", canRequest.StatusCode);
-
-            var content = new MultipartFormDataContent
-            {
-                { new StringContent(OAuthAccessToken.AccessToken), "access_token"},
-                { new StringContent(deviceId), "device_id" },
-                { new StringContent(scale.GetScaleName()), "scale" },
-                { new StringContent(measurementTypes.ToMeasurementTypesString()), "type" },
-                { new StringContent(optimize.ToString()), "optimize" },
-            };
-
-            if (!string.IsNullOrEmpty(moduleId))
-                content.Add(new StringContent(moduleId), "module_id");
-            if (onlyLastMeasurement)
-            {
-                content.Add(new StringContent("last"), "date_end");
-            }
-            else
-            {
-                if (begin.HasValue)
-                    content.Add(new StringContent(begin.Value.ToUtcTimestamp().ToString()), "date_begin");
-                if (end.HasValue)
-                    content.Add(new StringContent(end.Value.ToUtcTimestamp().ToString()), "date_end");
-            }
-           
-            if (limit != 1024)
-                content.Add(new StringContent(limit > 1024 || limit < 1 ? "1024" : limit.ToString()), "limit");
-            if (realtime)
-                content.Add(new StringContent("true"), "realtime");
-
-            var response = await _httpClient.PostAsync(GetMeasureUrl, content);
-            var responseString = await response.Content.ReadAsStringAsync();
-
-            var sdResponse = response.IsSuccessStatusCode ?
-                Response<MeasurementData>.CreateSuccessful(JsonConvert.DeserializeObject<MeasurementData>(responseString), response.StatusCode) :
-                Response<MeasurementData>.CreateUnsuccessful(responseString, response.StatusCode);
-
-            if(response.IsSuccessStatusCode)
-                sdResponse.Result.CreateMeasurementData(optimize, measurementTypes);
-
-            return sdResponse;
-        }
-
-        private async Task<HttpResponseMessage> CanRequestNetatmo()
-        {
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-
-            if (OAuthAccessToken == null)
-                throw new Exception("Please login first");
-
-            if (OAuthAccessToken.NeedsRefresh)
-                response = await RefreshToken();
+            var content = HttpContentCreator.CreateGetMeasureHttpContent(deviceId, scale, measurementTypes, moduleId, onlyLastMeasurement, begin, end, optimize, limit, realtime);
+            var response = await Request<MeasurementData>(Urls.GetMeasureUrl, content);
+            if(response.Success)
+                response.Result.CreateMeasurementData(optimize, measurementTypes);
 
             return response;
         }
 
-        private async Task<HttpResponseMessage> RefreshToken()
+        private async Task<bool> RefreshToken()
         {
-            var content = new MultipartFormDataContent
+            var content = HttpContentCreator.CreateRefreshTokenHttpContent(OAuthAccessToken.RefreshToken, ClientId, ClientSecret);
+            var response = await Request<OAuthAccessToken>(Urls.RequestTokenUrl, content, true);
+            if (!response.Success)
+                return false;
+
+            OAuthAccessToken = response.Result;
+            return true;
+        }
+
+        private async Task<Response<T>> Request<T>(string url, Dictionary<string, string> content, bool isTokeRenquest = false)
+        {
+            var httpContent = new MultipartFormDataContent();
+
+            //Check if authenticated and refresh oauth token if needed
+            if (!isTokeRenquest)
             {
-                {new StringContent("refresh_token"), "grant_type"},
-                {new StringContent(OAuthAccessToken.RefreshToken), "refresh_token"},
-                {new StringContent(ClientId), "client_id"},
-                {new StringContent(ClientSecret), "client_secret"},
-            };
+                if(OAuthAccessToken == null)
+                    return Response<T>.CreateUnsuccessful("Please login first", HttpStatusCode.Unauthorized);
 
-            var response = await _httpClient.PostAsync(RequestTokenUrl, content);
-            if (!response.IsSuccessStatusCode)
-                return response;
+                if (OAuthAccessToken.NeedsRefresh)
+                {
+                    var refreshed = await RefreshToken();
+                    if (!refreshed)
+                        return Response<T>.CreateUnsuccessful("Unable to refresh token", HttpStatusCode.ExpectationFailed);
+                }
 
-            var responseString = await response.Content.ReadAsStringAsync();
-            OAuthAccessToken = JsonConvert.DeserializeObject<OAuthAccessToken>(responseString);
+                httpContent.Add(new StringContent(OAuthAccessToken.AccessToken), "access_token");
+            }
+            
+            foreach (var key in content.Keys)
+            {
+                httpContent.Add(new StringContent(content[key]), key);
+            }
 
-            return response;
+            var clientResponse = await _httpClient.PostAsync(url, httpContent);
+            var responseString = await clientResponse.Content.ReadAsStringAsync();
+            var responseResult = clientResponse.IsSuccessStatusCode ?
+                Response<T>.CreateSuccessful(JsonConvert.DeserializeObject<T>(responseString), clientResponse.StatusCode) :
+                Response<T>.CreateUnsuccessful(responseString, clientResponse.StatusCode);
+
+            return responseResult;
         }
 
         protected virtual void OnLoginSuccessful()

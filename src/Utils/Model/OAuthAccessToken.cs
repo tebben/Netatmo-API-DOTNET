@@ -37,6 +37,6 @@ namespace Netatmo.Net.Model
         public long ExpireIn { get; set; }
 
         [JsonIgnore]
-        public bool NeedsRefresh => _creationTime.AddSeconds(ExpiresIn - _minusExpiresSeconds) >= DateTime.Now;
+        public bool NeedsRefresh => _creationTime.AddSeconds(ExpiresIn - _minusExpiresSeconds) <= DateTime.Now;
     }
 }
