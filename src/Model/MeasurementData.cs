@@ -37,8 +37,11 @@ namespace Netatmo.Net.Model
                 {
                     var begintime = (long)JsonConvert.DeserializeObject(a["beg_time"].ToString(), typeof(long));
                     long stepTime = 0;
-                    if(a.Contains("step_time"))
+
+                    if (a["step_time"] != null) //contains does somehow not seem to work here
+                    {
                         stepTime = (long)JsonConvert.DeserializeObject(a["step_time"].ToString(), typeof(long));
+                    }
 
                     var valueSteps = a["value"] as JArray;
                     for (var i = 0; i < valueSteps.Count; i++)
