@@ -6,6 +6,8 @@
         read_thermostat,
         write_thermostat,
         read_camera,
-        access_camera
+        access_camera,
+        read_bubendorff,
+        write_bubendorff
     }
 }
