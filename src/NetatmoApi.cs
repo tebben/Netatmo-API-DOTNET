@@ -231,7 +231,6 @@ namespace Netatmo.Net
         public async Task<Response<iDiamantSetShutter.Root>> SetShutter(string home_id, string module_id, int module_targetposition, string module_bridge)
         {
             var content = HttpContentCreator.CreateSetShutterDataHttpContent(home_id, module_id, module_targetposition, module_bridge);
-            //string payload = "{\"home\":{\"id\":\"5e9a0832a91a648422152f28\",\"modules\":[{\"id\":\"0000259417\",\"target_position\":100,\"bridge\":\"70:ee:50:82:9d:ae\"}]}}";
             string payload = "{\"home\":{\"id\":\"%homeid%\",\"modules\":[{\"id\":\"%shutterid%\",\"target_position\":%target_position%,\"bridge\":\"%bridgeid%\"}]}}";
             payload = payload.Replace("%homeid%", home_id);
             payload = payload.Replace("%target_position%", module_targetposition.ToString());
