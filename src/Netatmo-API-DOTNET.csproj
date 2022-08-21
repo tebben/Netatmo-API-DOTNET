@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\iDiamantGatewayTypesExtensions.cs" />
+    <Compile Include="Model\Body.cs" />
     <Compile Include="Model\iDiamantHomes.cs" />
     <Compile Include="Model\iDiamantHomeStatus.cs" />
     <Compile Include="Model\iDiamantScenarios.cs" />

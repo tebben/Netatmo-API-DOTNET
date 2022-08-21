@@ -23,7 +23,7 @@ namespace Netatmo.Net.Utils
         }
 
 
-        public static Dictionary<string, string> CreateAuthorizationRequestHttpContent(string clientId, string clientSecret, string code, string redirect_uri, NetatmoScope[] scopes)
+        public static Dictionary<string, string> CreateAuthorizationRequestHttpContent(string clientId, string clientSecret, string code, string redirect_uri,NetatmoScope[] scopes)
         {
 
             var content = new Dictionary<string, string>

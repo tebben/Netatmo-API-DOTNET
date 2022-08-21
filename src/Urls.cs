@@ -21,7 +21,9 @@
         public static string SetHomeSetShutterUrl => $"{UrlBase}{UrlSetShutterData}";
 
         public static string UrlGetHomesData = "/api/homesdata";
+
         public static string UrlGetHomeStatusData = "/api/homestatus?home_id=%id%";
+
         public static string UrlSetShutterData = "/api/setstate";
     }
 }

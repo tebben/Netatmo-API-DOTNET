@@ -1,55 +1,34 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Netatmo.Net.Model
 {
     public class Device
     {
-        [JsonProperty(PropertyName = "_id")]
-        public string Id{ get; set; }
-
-        [JsonProperty(PropertyName = "alarm_config")]
-        public AlarmConfig AlarmConfig { get; set; }
-
-        [JsonProperty(PropertyName = "cipher_id")]
-        public string CipherId { get; set; }
-
-        [JsonProperty(PropertyName = "co2_calibrating")]
-        public bool Co2Calibrating { get; set; }
-
-        [JsonProperty(PropertyName = "dashboard_data")]
-        public DashboardData DashboardData { get; set; }
-
-        [JsonProperty(PropertyName = "data_type")]
-        public string[] DataType { get; set; }
-
-        [JsonProperty(PropertyName = "firmware")]
-        public int Firmware { get; set; }
-
-        [JsonProperty(PropertyName = "last_status_store")]
-        public long LastStatusStore { get; set; }
-
-        [JsonProperty(PropertyName = "last_upgrade")]
-        public long LastUpgrade { get; set; }
-
-        [JsonProperty(PropertyName = "meteo_alarms")]
-        public MeteoAlarm[] MeteoAlarms { get; set; }
-
-        [JsonProperty(PropertyName = "module_name")]
-        public string ModuleName { get; set; }
-
-        [JsonProperty(PropertyName = "modules")]
-        public Module[] Modules { get; set; }
-
-        [JsonProperty(PropertyName = "place")]
-        public Place Place { get; set; }
-
-        [JsonProperty(PropertyName = "station_name")]
-        public string StationName { get; set; }
-
-        [JsonProperty(PropertyName = "type")]
-        public string Type { get; set; }
-
-        [JsonProperty(PropertyName = "wifi_status")]
-        public int WifiStatus { get; set; }
+        public string _id { get; set; }
+        public string station_name { get; set; }
+        public int date_setup { get; set; }
+        public int last_setup { get; set; }
+        public string type { get; set; }
+        public int last_status_store { get; set; }
+        public string module_name { get; set; }
+        public int firmware { get; set; }
+        public int last_upgrade { get; set; }
+        public int wifi_status { get; set; }
+        public List<string> user_owner { get; set; }
+        public bool reachable { get; set; }
+        public AlarmConfig alarm_config { get; set; }
+        public bool co2_calibrating { get; set; }
+        public int hardware_version { get; set; }
+        public string customer_id { get; set; }
+        public List<string> data_type { get; set; }
+        public Place place { get; set; }
+        public bool public_ext_data { get; set; }
+        public bool air_quality_available { get; set; }
+        public string access_code { get; set; }
+        public string home_id { get; set; }
+        public string home_name { get; set; }
+        public DashboardData dashboard_data { get; set; }
+        public List<Module> modules { get; set; }
     }
 }
