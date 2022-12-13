@@ -4,10 +4,8 @@ namespace Netatmo.Net.Model
 {
     public class User
     {
-        [JsonProperty(PropertyName = "administrative")]
-        public Administrative Administrative { get; set; }
-
-        [JsonProperty(PropertyName = "mail")]
-        public string Mail { get; set; }
+        public string mail { get; set; }
+        public Administrative administrative { get; set; }
+        public bool app_telemetry { get; set; }
     }
 }

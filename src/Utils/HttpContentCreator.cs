@@ -22,6 +22,24 @@ namespace Netatmo.Net.Utils
             return content;
         }
 
+
+        public static Dictionary<string, string> CreateAuthorizationRequestHttpContent(string clientId, string clientSecret, string code, string redirect_uri,NetatmoScope[] scopes)
+        {
+
+            var content = new Dictionary<string, string>
+            {
+                {"grant_type", "authorization_code"},
+                {"client_id", clientId},
+                {"client_secret", clientSecret},
+                {"code", code},
+                {"redirect_uri", redirect_uri},
+                {"scope", scopes.ToScopeString()}
+            };
+
+            return content;
+        }
+
+
         public static Dictionary<string, string> CreateRefreshTokenHttpContent(string refreshToken, string clientId, string clientSecret)
         {
             var content = new Dictionary<string, string>
@@ -75,6 +93,46 @@ namespace Netatmo.Net.Utils
                 content.Add("limit", limit > 1024 || limit < 1 ? "1024" : limit.ToString());
             if (realtime)
                 content.Add("realtime", "true");
+
+            return content;
+        }
+
+
+        /* iDiamant */
+
+        public static Dictionary<string, string> CreateGetiDiamantHomesDataHttpContent(string homeId = null, iDiamantGatewayTypes[] gatewayTypes = null)
+        {
+            var content = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(homeId))
+                content.Add("home_id", homeId);
+
+            if (gatewayTypes != null)
+                content.Add("gateway_types", gatewayTypes.ToGatewayString());
+
+            return content;
+        }
+
+
+        public static Dictionary<string, string> CreateGetiDiamantHomeStatusDataHttpContent(string homeId, iDiamantGatewayTypes[] gatewayTypes = null)
+        {
+            var content = new Dictionary<string, string>();
+            content.Add("home_id", homeId);
+
+            if (gatewayTypes != null)
+                content.Add("gateway_types", gatewayTypes.ToGatewayString());
+
+            return content;
+        }
+
+        public static Dictionary<string, string> CreateSetShutterDataHttpContent(string home_id, string module_id, int module_targetposition, string module_bridge)
+        {
+            var content = new Dictionary<string, string>
+            {
+                {"home_id", home_id },
+                {"module_id",  module_id},
+                {"module_targetposition", module_targetposition.ToString() },
+                {"module_bridge", module_bridge},
+            };
 
             return content;
         }

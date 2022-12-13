@@ -4,16 +4,9 @@ namespace Netatmo.Net.Model
 {
     public class StationsData
     {
-        [JsonProperty(PropertyName = "body")]
-        public StationsBody Data { get; set; }
-
-        [JsonProperty(PropertyName = "status")]
-        public string Status{ get; set; }
-
-        [JsonProperty(PropertyName = "time_exec")]
-        public float TimeExec { get; set; }
-
-        [JsonProperty(PropertyName = "time_server")]
-        public long TimeServer { get; set; }
+        public Body body { get; set; }
+        public string status { get; set; }
+        public double time_exec { get; set; }
+        public int time_server { get; set; }
     }
 }

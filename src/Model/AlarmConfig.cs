@@ -1,13 +1,11 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Netatmo.Net.Model
 {
     public class AlarmConfig
     {
-        [JsonProperty(PropertyName = "default_alarm")]
-        public DefaultAlarm[] DefaultAlarm { get; set; }
-
-        [JsonProperty(PropertyName = "personnalized")]
-        public PersonalizedAlarm[] PersonalizedAlarm { get; set; }
+        public List<DefaultAlarm> default_alarm { get; set; }
+        public List<object> personnalized { get; set; }
     }
 }

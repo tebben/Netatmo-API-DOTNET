@@ -38,6 +38,13 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\iDiamantGatewayTypesExtensions.cs" />
+    <Compile Include="Model\Body.cs" />
+    <Compile Include="Model\iDiamantHomes.cs" />
+    <Compile Include="Model\iDiamantHomeStatus.cs" />
+    <Compile Include="Model\iDiamantScenarios.cs" />
+    <Compile Include="Model\iDiamantSetShutter.cs" />
+    <Compile Include="Model\iDiamantGatewayTypes.cs" />
     <Compile Include="Urls.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\MeasurementTypeExtensions.cs" />

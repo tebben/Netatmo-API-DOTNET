@@ -1,37 +1,24 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Netatmo.Net.Model
 {
     public class Module
     {
-        [JsonProperty(PropertyName = "_id")]
-        public string Id { get; set; }
-
-        [JsonProperty(PropertyName = "battery_percent")]
-        public int BatteryPercent { get; set; }
-
-        [JsonProperty(PropertyName = "battery_vp")]
-        public int BatteryVp { get; set; }
-
-        [JsonProperty(PropertyName = "dashboard_data")]
-        public DashboardData DashboardData { get; set; }
-
-        [JsonProperty(PropertyName = "data_type")]
-        public string[] DataType { get; set; }
-
-        [JsonProperty(PropertyName = "firmware")]
-        public int Firmware { get; set; }
-
-        [JsonProperty(PropertyName = "last_message")]
-        public long LastMessage { get; set; }
-
-        [JsonProperty(PropertyName = "last_seen")]
-        public long LastSeen { get; set; }
-
-        [JsonProperty(PropertyName = "module_name")]
-        public string ModuleName { get; set; }
-
-        [JsonProperty(PropertyName = "type")]
-        public string Type { get; set; }
+        public string _id { get; set; }
+        public string type { get; set; }
+        public string module_name { get; set; }
+        public int last_setup { get; set; }
+        public List<string> data_type { get; set; }
+        public double pluvio_scale_auget_to_mm { get; set; }
+        public int battery_percent { get; set; }
+        public string battery_level { get; set; }
+        public bool reachable { get; set; }
+        public int firmware { get; set; }
+        public int last_message { get; set; }
+        public int last_seen { get; set; }
+        public int rf_status { get; set; }
+        public int battery_vp { get; set; }
+        public DashboardData dashboard_data { get; set; }
     }
 }

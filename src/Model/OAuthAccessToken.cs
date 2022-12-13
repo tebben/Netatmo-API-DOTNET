@@ -6,9 +6,9 @@ namespace Netatmo.Net.Model
     public class OAuthAccessToken
     {
         //To be safe extract some seconds from the original expire seconds
-        private int _minusExpiresSeconds = 1;
+        public int _minusExpiresSeconds = 1;
         private string _accessToken;        
-        private DateTime _creationTime;
+        public DateTime _creationTime;
 
         [JsonProperty(PropertyName = "access_token")]
         public string AccessToken
@@ -36,7 +36,14 @@ namespace Netatmo.Net.Model
         [JsonProperty(PropertyName = "expire_in")]
         public long ExpireIn { get; set; }
 
+        [JsonProperty(PropertyName = "creation_time")]
+        public DateTime CreationTime { get; set; }
+
+        [JsonProperty(PropertyName = "minusexpires_seconds")]
+        public int MinusExpiresSeconds { get; set; }
+
         [JsonIgnore]
-        public bool NeedsRefresh => _creationTime.AddSeconds(ExpiresIn - _minusExpiresSeconds) <= DateTime.Now;
+        public bool NeedsRefresh => CreationTime.AddSeconds(ExpiresIn - MinusExpiresSeconds) <= DateTime.Now;
+        //public bool NeedsRefresh => _creationTime.AddSeconds(ExpiresIn - _minusExpiresSeconds) <= DateTime.Now;
     }
 }
